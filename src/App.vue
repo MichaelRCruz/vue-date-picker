@@ -67,23 +67,21 @@ export default {
     setMonthYear(month) {
       this.days = [];
       this.numberOfDays = month.daysInMonth();
-      // this conditional limits the range of days as to not exceed one year ago
-      if (month.format('MMM, YYYY') ==
-          moment().subtract(1, 'year').format('MMM')
-          + ", " + moment().subtract(1, 'year').format('YYYY')) {
+      // limits the range of days as to not exceed one year ago
+      if (month.format('MMM, YYYY') ===
+          moment().subtract(1, 'year').format('MMM, YYYY')) {
         var startDay = moment().format('d');
         for (var i = startDay; i <= this.numberOfDays; i++) {
           this.days.push(i.toString());
         }
-        // this conditional limits the range of days as to not exceed one year from now
-      } else if (month.format('MMM, YYYY') ==
-                 moment().add(1, 'year').format('MMM')
-                 + ", " + moment().add(1, 'year').format('YYYY')) {
+        // limits the range of days as to not exceed one year from now
+      } else if (month.format('MMM, YYYY') ===
+                 moment().add(1, 'year').format('MMM, YYYY')) {
           var endDay = moment().format('d');
           for (var i = 1; i <= endDay; i++) {
             this.days.push(i.toString());
           }
-      // this conditional handles all other in-between cases
+      // handles all other in-between cases
       } else {
         for (var i = 1; i <= this.numberOfDays; i++) {
           this.days.push(i.toString());
