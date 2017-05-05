@@ -49,7 +49,7 @@ export default {
       moment: moment(),
       months: [],
       days: ["please select a month"],
-      numberOfDays: Number,
+      numberOfDays: 0,
       date: "MM/DD/YYYY",
       selectedDay: "",
       selectedMonthYear: {}
@@ -67,7 +67,7 @@ export default {
     setMonthYear(month) {
       this.days = [];
       this.numberOfDays = month.daysInMonth();
-      console.log('CXCXCXCXCXCX', month.format('MMM, YYYY'))
+      // this conditional limits the range of days as to not exceed one year ago
       if (month.format('MMM, YYYY') ==
           moment().subtract(1, 'year').format('MMM')
           + ", " + moment().subtract(1, 'year').format('YYYY')) {
@@ -75,14 +75,15 @@ export default {
         for (var i = startDay; i <= this.numberOfDays; i++) {
           this.days.push(i.toString());
         }
+        // this conditional limits the range of days as to not exceed one year from now
       } else if (month.format('MMM, YYYY') ==
-                 moment().subtract(1, 'year').format('MMM')
+                 moment().add(1, 'year').format('MMM')
                  + ", " + moment().add(1, 'year').format('YYYY')) {
           var endDay = moment().format('d');
-          console.log('LKLKLKLKLK', endDay);
           for (var i = 1; i <= endDay; i++) {
             this.days.push(i.toString());
           }
+      // this conditional handles all other in-between cases
       } else {
         for (var i = 1; i <= this.numberOfDays; i++) {
           this.days.push(i.toString());
@@ -94,7 +95,6 @@ export default {
     },
     setDay(day) {
       this.selectedDay = day;
-      console.log('XYXYXYXYXY', day);
       if (this.selectedDay != "" && this.selectedMonthYear != {}) {
         this.date = this.selectedMonthYear.startOf('month').add(day - 1, 'd').format('MM/DD/YYYY');
       }
