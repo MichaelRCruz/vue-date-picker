@@ -15,7 +15,10 @@ npm install
 npm run dev
 ```
 
-4. ...
+4.
+```
+...
+```
 
 5. Profit.
 
