@@ -3,35 +3,34 @@
     <div class="container">
 
 
+      <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+          {{ this.monthYearLabel }}
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu scrollable-menu">
+          <li v-for="month in months" @click="setMonthYear(month)">
+            <a href="#">{{ month.format('MMM, YYYY') }}</a>
+          </li>
+        </ul>
+      </div>
 
-    <div class="dropdown">
-      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-        {{ this.monthYearLabel }}
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu scrollable-menu">
-        <li v-for="month in months" @click="setMonthYear(month)">
-          <a href="#">{{ month.format('MMM, YYYY') }}</a>
-        </li>
-      </ul>
-    </div>
+      <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+          {{ this.dayLabel }}
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu scrollable-menu">
+          <li v-for="day in days" @click="setDay(day)">
+            <a href="#">{{ day }}</a>
+          </li>
+        </ul>
+      </div>
 
-    <div class="dropdown">
-      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-        {{ this.dayLabel }}
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu scrollable-menu">
-        <li v-for="day in days" @click="setDay(day)">
-          <a href="#">{{ day }}</a>
-        </li>
-      </ul>
-    </div>
-
-    <div class="input-append date form_datetime">
-        <input class="form" size="16" type="text" :value="this.date" readonly>
-        <span class="add-on"><i class="icon-th"></i></span>
-    </div>
+      <div class="input-append date form_datetime">
+          <input class="form" size="16" type="text" :value="this.date" readonly>
+          <span class="add-on"><i class="icon-th"></i></span>
+      </div>
 
 
     </div>

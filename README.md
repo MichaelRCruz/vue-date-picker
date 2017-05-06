@@ -1,3 +1,7 @@
+## vue-datepicker
+
+This idea here is to create a date picker that only allows a certain range of dates to choose from. For this specific application, it's a range of two years, i.e., one full year preceding today's date and one full year following today's date. The chosen date is displayed in a generic form-field as a string, but the date object is still available for use in any perceivable way.
+
 ### Installation Instructions
 
 1. Fork or clone the repository.
