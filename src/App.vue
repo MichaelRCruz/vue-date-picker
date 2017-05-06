@@ -38,67 +38,67 @@
 </template>
 
 <script>
-import moment from 'moment';
+  import moment from 'moment';
 
-export default {
-  data() {
-    return {
-      monthYearLabel: moment().format('MMM, YYYY'),
-      dayLabel: moment().format('D'),
-      moment: moment(),
-      months: [],
-      days: ["please select a month"],
-      numberOfDays: 0,
-      date: "MM/DD/YYYY",
-      selectedDay: "",
-      selectedMonthYear: {}
-    }
-  },
-  beforeMount() {
-    for (var i = 12; i >= 1; i--) {
-      this.months.push(this.moment.clone().subtract(i, 'M'));
-    }
-    for (var i = 0; i <= 12; i++) {
-      this.months.push(this.moment.clone().add(i, 'M'));
-    }
-  },
-  methods: {
-    setMonthYear(month) {
-      this.days = [];
-      this.numberOfDays = month.daysInMonth();
-      // limits the range of days as to not exceed one year ago
-      if (month.format('MMM, YYYY') ===
-          moment().subtract(1, 'year').format('MMM, YYYY')) {
-        var startDay = moment().format('d');
-        for (var i = startDay; i <= this.numberOfDays; i++) {
-          this.days.push(i.toString());
-        }
-        // limits the range of days as to not exceed one year from now
-      } else if (month.format('MMM, YYYY') ===
-                 moment().add(1, 'year').format('MMM, YYYY')) {
-          var endDay = moment().format('d');
-          for (var i = 1; i <= endDay; i++) {
+  export default {
+    data() {
+      return {
+        monthYearLabel: moment().format('MMM, YYYY'),
+        dayLabel: moment().format('D'),
+        moment: moment(),
+        months: [],
+        days: ["please select a month"],
+        numberOfDays: 0,
+        date: "MM/DD/YYYY",
+        selectedDay: "",
+        selectedMonthYear: {}
+      }
+    },
+    beforeMount() {
+      for (var i = 12; i >= 1; i--) {
+        this.months.push(this.moment.clone().subtract(i, 'M'));
+      }
+      for (var i = 0; i <= 12; i++) {
+        this.months.push(this.moment.clone().add(i, 'M'));
+      }
+    },
+    methods: {
+      setMonthYear(month) {
+        this.days = [];
+        this.numberOfDays = month.daysInMonth();
+        // limits the range of days as to not exceed one year ago
+        if (month.format('MMM, YYYY') ===
+            moment().subtract(1, 'year').format('MMM, YYYY')) {
+          var startDay = moment().format('d');
+          for (var i = startDay; i <= this.numberOfDays; i++) {
             this.days.push(i.toString());
           }
-      // handles all other in-between cases
-      } else {
-        for (var i = 1; i <= this.numberOfDays; i++) {
-          this.days.push(i.toString());
+          // limits the range of days as to not exceed one year from now
+        } else if (month.format('MMM, YYYY') ===
+                   moment().add(1, 'year').format('MMM, YYYY')) {
+            var endDay = moment().format('d');
+            for (var i = 1; i <= endDay; i++) {
+              this.days.push(i.toString());
+            }
+        // handles all other in-between cases
+        } else {
+          for (var i = 1; i <= this.numberOfDays; i++) {
+            this.days.push(i.toString());
+          }
         }
+        this.selectedMonthYear = month;
+        this.date = month.format('MM/DD/YYYY');
+        this.monthYearLabel = month.format('MMM, YYYY');
+      },
+      setDay(day) {
+        this.selectedDay = day;
+        if (this.selectedDay != "" && this.selectedMonthYear != {}) {
+          this.date = this.selectedMonthYear.startOf('month').add(day - 1, 'd').format('MM/DD/YYYY');
+        }
+        this.dayLabel = day;
       }
-      this.selectedMonthYear = month;
-      this.date = month.format('MM/DD/YYYY');
-      this.monthYearLabel = month.format('MMM, YYYY');
-    },
-    setDay(day) {
-      this.selectedDay = day;
-      if (this.selectedDay != "" && this.selectedMonthYear != {}) {
-        this.date = this.selectedMonthYear.startOf('month').add(day - 1, 'd').format('MM/DD/YYYY');
-      }
-      this.dayLabel = day;
     }
   }
-}
 </script>
 
 <style>
