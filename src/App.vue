@@ -1,134 +1,283 @@
-<template>
-  <div id="app">
-    <div class="container">
+<template lang="html">
+  <div id="calendar">
 
 
-      <div class="dropdown">
-        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-          {{ this.monthYearLabel }}
-          <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu scrollable-menu">
-          <li v-for="month in months" @click="setMonthYear(month)">
-            <a href="#">{{ month.format('MMM, YYYY') }}</a>
-          </li>
-        </ul>
+    <form class="form-inline">
+      <label class="sr-only" for="inlineFormInputGroup"></label>
+      <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+        <div class="input-group-addon" @click="focus()">
+          <i class="fa fa-calendar"></i>
+        </div>
+        <input type="text"
+               class="form-control" id="inlineFormInputGroup" placeholder="MM/DD/YYYY"
+               :value="this.selectionDisplay"
+               @click="focus()">
+      </div>
+    </form>
+
+    <div v-show="active" class="appContainer">
+      <div class="toggleContainer">
+          <div class="toggle toggleLeft">
+            <i @click="lastMonth(moment)" class="fa fa-arrow-circle-left"></i>
+          </div>
+          <div class="toggle currentMonth">
+            {{ this.moment.format('MMM') + this.moment.format(' YYYY') }}
+          </div>
+          <div class="toggle toggleRight">
+            <i @click="nextMonth(moment)" class="fa fa-arrow-circle-right"></i>
+          </div>
       </div>
 
-      <div class="dropdown">
-        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-          {{ this.dayLabel }}
-          <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu scrollable-menu">
-          <li v-for="day in days" @click="setDay(day)">
-            <a href="#">{{ day }}</a>
-          </li>
-        </ul>
+      <div class="dayNameContainer">
+        <div class="dayNames" v-for="days in weekdays">
+          {{ days }}
+        </div>
       </div>
 
-      <div class="input-append date form_datetime">
-          <input class="form" size="16" type="text" :value="this.date" readonly>
-          <span class="add-on"><i class="icon-th"></i></span>
+      <div class="parent">
+        <div class="child"
+             v-for="date in filterDate"
+             @click="selectDate(date)"
+
+             :style="[date.style]">
+          {{ date.format('D') }}
+        </div>
       </div>
-
-
     </div>
+
+
   </div>
 </template>
 
-<script>
+
+<script scoped>
   import moment from 'moment';
 
   export default {
     data() {
       return {
-        monthYearLabel: moment().format('MMM, YYYY'),
-        dayLabel: moment().format('D'),
+        month: [],
+        weekdays: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+        availableDates: [],
+        datesRange: [ moment().subtract(1, 'year').unix(), moment().add(1, 'year').unix() ],
         moment: moment(),
-        months: [],
-        days: ["please select a month"],
-        numberOfDays: 0,
-        date: "MM/DD/YYYY",
-        selectedDay: "",
-        selectedMonthYear: {}
+        selectionDisplay: "",
+        selection: {},
+        active: false,
+        sliderOptions: {
+          value: [
+            365,
+            1095
+          ],
+          width: "100%",
+          height: 8,
+          dotSize: 16,
+          min: 0,
+          max: 1460,
+          disabled: false,
+          show: true,
+          tooltip: "always",
+          formatter: "{value}",
+          bgStyle: {
+            "backgroundColor": "#dcf4d3",
+            "boxShadow": "inset 0.5px 0.5px 3px 1px rgba(0,0,0,.36)"
+          },
+          sliderStyle: [
+            {
+              "backgroundColor": "#ACE496"
+            },
+            {
+              "backgroundColor": "#ACE496"
+            }
+          ],
+          tooltipStyle: {
+            "backgroundColor": "#5F7279",
+            "borderColor": "#5F7279"
+          },
+          processStyle: {
+            "backgroundColor": "#ACE496",
+            // "boxShadow": "inset 0.5px 0.5px 3px 1px rgba(0,0,0,.36)"
+          }
+        }
+      }
+    },
+    computed: {
+      filterDate() {
+        var _self = this;
+        return this.month.map(function(e) {
+          var color = '#ACE496';
+          var borderColor = '1px solid #bdbdbd';
+          var cursorStyle = 'not-allowed';
+          _self.availableDates.forEach(function(el) {
+            if (el.format('LL') == e.format('LL')) {
+              borderColor = '2px solid #5F7279';
+              cursorStyle = 'pointer';
+            }
+          });
+          if ( e.unix() >= _self.datesRange[0]
+               && e.unix() <= _self.datesRange[1] ) {
+                 borderColor = '2px solid #5F7279';
+                 cursorStyle = 'pointer'
+               }
+          if (e.format('M') != _self.moment.format('M')) {
+            color = '#dcf4d3';
+          }
+          e['style'] = { backgroundColor: color,
+                         border: borderColor,
+                         cursor: cursorStyle
+                       }
+          return e
+        })
       }
     },
     beforeMount() {
-      for (var i = 12; i >= 1; i--) {
-        this.months.push(this.moment.clone().subtract(i, 'M'));
-      }
-      for (var i = 0; i <= 12; i++) {
-        this.months.push(this.moment.clone().add(i, 'M'));
-      }
+      this.setDates();
+      this.sliderOptions.formatter =
+      this.moment.clone().subtract(this.sliderOptions.value[0], 'days').format('LL');
+      console.log('Date Range: ', this.datesRange[0], this.datesRange[1]);
     },
     methods: {
-      setMonthYear(month) {
-        this.days = [];
-        this.numberOfDays = month.daysInMonth();
-        // limits the range of days as to not exceed one year ago
-        if (month.format('MMM, YYYY') ===
-            moment().subtract(1, 'year').format('MMM, YYYY')) {
-          var startDay = moment().format('d');
-          for (var i = startDay; i <= this.numberOfDays; i++) {
-            this.days.push(i.toString());
-          }
-          // limits the range of days as to not exceed one year from now
-        } else if (month.format('MMM, YYYY') ===
-                   moment().add(1, 'year').format('MMM, YYYY')) {
-            var endDay = moment().format('d');
-            for (var i = 1; i <= endDay; i++) {
-              this.days.push(i.toString());
-            }
-        // handles all other in-between cases
-        } else {
-          for (var i = 1; i <= this.numberOfDays; i++) {
-            this.days.push(i.toString());
-          }
-        }
-        this.selectedMonthYear = month;
-        this.date = month.format('MM/DD/YYYY');
-        this.monthYearLabel = month.format('MMM, YYYY');
+      nextMonth(moment) {
+        this.moment = moment.clone().add(1, 'months');
+        this.setDates();
+        console.log('toggle forward', this.month);
       },
-      setDay(day) {
-        this.selectedDay = day;
-        if (this.selectedDay != "" && this.selectedMonthYear != {}) {
-          this.date = this.selectedMonthYear.startOf('month').add(day - 1, 'd').format('MM/DD/YYYY');
+      lastMonth(moment) {
+        this.moment = moment.clone().subtract(1, 'months');
+        this.setDates();
+        console.log('toggle backward', this.month);
+      },
+      setDates() {
+        this.month = [];
+        var fun = this.moment.clone().startOf('month').startOf('week');
+        var end = this.moment.clone().endOf('month').endOf('week');
+        while ( fun < end ) {
+          this.month.push(fun.clone());
+          fun.add(1, 'day');
         }
-        this.dayLabel = day;
+      },
+      selectDate(date) {
+        var _self = this;
+        if ( date.unix() >= this.datesRange[0]
+             && date.unix() <= this.datesRange[1] ) {
+          this.selectionDisplay = date.format('MM/DD/YYYY');
+          this.selection = date;
+          this.active = false;
+        }
+        this.availableDates.forEach(function(el) {
+          if (el.format('LL') == date.format('LL')) {
+            _self.selectionDisplay = date.format('MM/DD/YYYY');
+            _self.selection = date;
+            _self.active = false;
+          }
+        });
+      },
+      focus() {
+        this.active = !this.active;
       }
     }
   }
 </script>
 
-<style>
+<style lang="css" scoped>
 
-  .container {
-    padding-top: 50px;
-    width: 500px;
-    margin: 0 auto;
+  #calendar {
+    flex: 1;
+    padding: 30px 30px 30px 0;
   }
 
-  button {
-    width: 130px;
+  .appContainer {
+    margin: 0 0 0 100px;
   }
 
-  .dropdown, .date {
-    display: inline;
+  .form-inline {
+    margin: 50px 0 15px 100px;
   }
 
-  .form {
-    width: 200px;
-    padding-left: 10px;
+  .input-group-addon {
+    cursor: pointer;
+    color: #dcf4d3;
+    background-color: #5F7279;
   }
 
-  li {
-    padding-left: 10px;
+  .toggleContainer {
+    width: 307px;
+    height: 20px;
+    margin-bottom: 5px;
+    display: flex;
+    flex-flow: row wrap;
+    flex-grow: 1;
+    color: #5F7279;
   }
 
-  .scrollable-menu {
-      height: auto;
-      max-height: 250px;
-      overflow-x: hidden;
+  .toggleLeft {
+    text-align: left;
+    flex: 1;
+    margin-left: 15px;
+    font-size: 20px;
+    cursor: pointer;
   }
+
+  .currentMonth {
+    text-align: center;
+    flex: 1;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 17px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 20px;
+  }
+
+  .toggleRight {
+    text-align: right;
+    flex: 1;
+    margin-right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .dayNameContainer {
+    width: 307px;
+    height: 24px;
+    display: flex;
+    flex-flow: row wrap;
+    flex-grow: 1;
+  }
+
+  .dayNames {
+    margin-right: 14px;
+    text-align: center;
+    flex: 1 0 12.2%;
+    height: 20px;
+    margin: 1px;
+    border-radius: 2px;
+    font-family: 'Archivo Black', sans-serif;
+    color: #5F7279;
+  }
+
+  .parent {
+    display: flex;
+    flex-flow: row wrap;
+    flex-grow: 1;
+    width: 307px;
+  }
+
+  .child {
+    flex: 1 0 12.2%;
+    border: 1px solid #bdbdbd;
+    height: 40px;
+    margin: 1px;
+    background-color: #dcdcdc;
+    border-radius: 2px;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 40px;
+    cursor: pointer;
+    color: #5F7279;
+  }
+
+  .child:hover {
+    background-color: #ED8A9A;
+  }
+
 </style>
