@@ -26,6 +26,19 @@ npm run dev
 
 5. Profit.
 
+#### Usage
+
+The end points of the date-range are set as Unix time stamps, e.g., 1494251559 seconds since January 1st, 1970. You can modify this range by hard-coding lines 61 & 62 of found in the file, `src/DatePicker.vue`.
+
+```javascript
+
+datesRange: [
+              moment().subtract(1, 'year').unix(),
+              moment().add(1, 'year').unix()
+            ],
+
+```
+
 #### Challenges Faced
 
 Date and time. Nuff said.

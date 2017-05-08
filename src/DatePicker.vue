@@ -58,7 +58,8 @@
       return {
         month: [],
         weekdays: [ "Su", "Mo", "Tu", "We", "Th", "Fr", "Sa" ],
-        datesRange: [ moment().subtract(1, 'year').unix(),
+        datesRange: [
+                      moment().subtract(1, 'year').unix(),
                       moment().add(1, 'year').unix()
                     ],
         moment: moment(),
@@ -79,14 +80,14 @@
                && e.unix() <= _self.datesRange[1] ) {
                  borderColor = '2px solid #5F7279';
                  cursorStyle = 'pointer'
-               }
+          }
           if ( e.format('M') != _self.moment.format('M') ) {
             color = '#dcf4d3';
           }
           e['style'] = { backgroundColor: color,
                                   border: borderColor,
                                   cursor: cursorStyle
-                       }
+                        }
           return e
         })
       }
