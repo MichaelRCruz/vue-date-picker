@@ -30,8 +30,6 @@ npm run dev
 
 Date and time. Nuff said.
 
-Un-commenting out the HTML will reveal other features that I am working on, but there are still bugs that need to be worked out.
-
 #### Technologies Used
 
 * Vue.js

@@ -49,8 +49,9 @@
 </template>
 
 
-<script scoped>
+<script>
   import moment from 'moment';
+
   export default {
     data() {
       return {
@@ -135,7 +136,7 @@
   }
 </script>
 
-<style lang="css" scoped>
+<style scoped>
   #calendar {
     flex: 1;
     padding: 30px 30px 30px 0;
