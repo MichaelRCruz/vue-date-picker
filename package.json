@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "moment": "^2.18.1",
-    "vue": "^2.1.0"
+    "vue": "^2.1.0",
+    "vue-slider-component": "^2.2.7"
   },
   "devDependencies": {
     "babel-core": "^6.0.0",

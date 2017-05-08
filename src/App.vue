@@ -1,48 +1,111 @@
 <template lang="html">
   <div id="calendar">
 
+    <div class="sliderText">
+      <h2>Date Picker</h2>
+      <h5>Select the range of accessible dates, relative to today's date, using the slider-tool below.</h5>
+      <h5>
+        The default range is set from one year preceding today's date up until one year folowing today's date.
+      </h5>
+      <h5>For further customization, use the two forms to the right.</h5>
+      <p>
+        *to reset all dates, please refresh your browser.
+      </p>
+    </div>
 
-    <form class="form-inline">
-      <label class="sr-only" for="inlineFormInputGroup"></label>
-      <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-        <div class="input-group-addon" @click="focus()">
-          <i class="fa fa-calendar"></i>
-        </div>
-        <input type="text"
-               class="form-control" id="inlineFormInputGroup" placeholder="MM/DD/YYYY"
-               :value="this.selectionDisplay"
-               @click="focus()">
-      </div>
-    </form>
+    <div @click="setRange()">
+        <vue-slider id="slider"
+                    ref="slider"
+                    v-bind="slider"
+                    v-model="slider.value">
+        </vue-slider>
+    </div>
 
-    <div v-show="active" class="appContainer">
-      <div class="toggleContainer">
-          <div class="toggle toggleLeft">
-            <i @click="lastMonth(moment)" class="fa fa-arrow-circle-left"></i>
+    <div class="calAndForms">
+
+      <div class="cal">
+        <form class="form-inline">
+          <label class="sr-only" for="inlineFormInputGroup"></label>
+          <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+            <div class="input-group-addon" @click="focus()">
+              <i class="fa fa-calendar"></i>
+            </div>
+            <input type="text"
+                   class="form-control" id="inlineFormInputGroup" placeholder="MM/DD/YYYY"
+                   :value="this.selectionDisplay"
+                   @click="focus()">
           </div>
-          <div class="toggle currentMonth">
-            {{ this.moment.format('MMM') + this.moment.format(' YYYY') }}
-          </div>
-          <div class="toggle toggleRight">
-            <i @click="nextMonth(moment)" class="fa fa-arrow-circle-right"></i>
-          </div>
-      </div>
+        </form>
 
-      <div class="dayNameContainer">
-        <div class="dayNames" v-for="days in weekdays">
-          {{ days }}
+        <div v-show="active">
+          <div class="toggleContainer">
+              <div class="toggle toggleLeft">
+                <i @click="lastMonth(moment)" class="fa fa-arrow-circle-left"></i>
+              </div>
+              <div class="toggle currentMonth">
+                {{ this.moment.format('MMM') + this.moment.format(' YYYY') }}
+              </div>
+              <div class="toggle toggleRight">
+                <i @click="nextMonth(moment)" class="fa fa-arrow-circle-right"></i>
+              </div>
+          </div>
+
+          <div class="dayNameContainer">
+            <div class="dayNames" v-for="days in weekdays">
+              {{ days }}
+            </div>
+          </div>
+
+          <div class="parent">
+            <div class="child"
+                 v-for="date in filterDate"
+                 @click="selectDate(date)"
+
+                 :style="[date.style]">
+              {{ date.format('D') }}
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="parent">
-        <div class="child"
-             v-for="date in filterDate"
-             @click="selectDate(date)"
+      <!-- <div class="forms">
+        <h5>Remove a date from the specified range here.</h5>
+        <form class="form-inline uniqueDate">
+          <label class="sr-only" for="inlineFormInputGroup"></label>
+          <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+            <div class="input-group-addon">
+              <i class="fa fa-calendar"></i>
+            </div>
+            <input type="text"
+                   class="form-control" id="inlineFormInputGroup" placeholder="remove MM/DD/YYYY"
+                   v-model="removedDisplay">
+          </div>
+        </form>
+        <button type="submit"
+                class="btn btn-primary"
+                @click="removeDate()">
+          Remove
+        </button>
 
-             :style="[date.style]">
-          {{ date.format('D') }}
-        </div>
-      </div>
+        <h5>Add a date outside of the specified range here.</h5>
+        <form class="form-inline uniqueDate">
+          <label class="sr-only" for="inlineFormInputGroup"></label>
+          <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+            <div class="input-group-addon">
+              <i class="fa fa-calendar"></i>
+            </div>
+            <input type="text"
+                   class="form-control" id="inlineFormInputGroup" placeholder="add MM/DD/YYYY"
+                   v-model="addedDisplay">
+          </div>
+        </form>
+        <button type="submit"
+                class="btn btn-primary"
+                @click="addDate()">
+          Add
+        </button>
+      </div> -->
+
     </div>
 
 
@@ -52,32 +115,33 @@
 
 <script scoped>
   import moment from 'moment';
+  import vueSlider from 'vue-slider-component';
 
   export default {
     data() {
       return {
         month: [],
         weekdays: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
-        availableDates: [],
-        datesRange: [ moment().subtract(1, 'year').unix(), moment().add(1, 'year').unix() ],
+        removedDates: [],
+        addedDates: [],
+        datesRange: [ null, null ],
         moment: moment(),
         selectionDisplay: "",
+        removedDisplay: "",
+        addedDisplay: "",
         selection: {},
         active: false,
-        sliderOptions: {
-          value: [
-            365,
-            1095
-          ],
+        slider: {
+          value: [-5, 5],
           width: "100%",
           height: 8,
           dotSize: 16,
-          min: 0,
-          max: 1460,
+          min: -30,
+          max: 30,
           disabled: false,
           show: true,
           tooltip: "always",
-          formatter: "{value}",
+          formatter: "{value} days",
           bgStyle: {
             "backgroundColor": "#dcf4d3",
             "boxShadow": "inset 0.5px 0.5px 3px 1px rgba(0,0,0,.36)"
@@ -104,37 +168,46 @@
     computed: {
       filterDate() {
         var _self = this;
-        return this.month.map(function(e) {
-          var color = '#ACE496';
-          var borderColor = '1px solid #bdbdbd';
-          var cursorStyle = 'not-allowed';
-          _self.availableDates.forEach(function(el) {
-            if (el.format('LL') == e.format('LL')) {
+        if (this.active) {
+          return this.month.map(function(e) {
+            var color = '#ACE496';
+            var borderColor = '1px solid #bdbdbd';
+            var cursorStyle = 'not-allowed';
+            if ( e.unix() >= _self.datesRange[0]
+                 && e.unix() <= _self.datesRange[1] ) {
               borderColor = '2px solid #5F7279';
-              cursorStyle = 'pointer';
+              cursorStyle = 'pointer'
             }
-          });
-          if ( e.unix() >= _self.datesRange[0]
-               && e.unix() <= _self.datesRange[1] ) {
-                 borderColor = '2px solid #5F7279';
-                 cursorStyle = 'pointer'
-               }
-          if (e.format('M') != _self.moment.format('M')) {
-            color = '#dcf4d3';
-          }
-          e['style'] = { backgroundColor: color,
-                         border: borderColor,
-                         cursor: cursorStyle
-                       }
-          return e
-        })
+            if (e.format('M') != _self.moment.format('M')) {
+              color = '#dcf4d3';
+            };
+            _self.removedDates.forEach(function(el) {
+              if (el.format('LL') == e.format('LL')) {
+                borderColor = '1px solid #bdbdbd';
+                cursorStyle = 'not-allowed';
+              }
+            });
+            _self.addedDates.forEach(function(el) {
+              if (el.format('LL') == e.format('LL')) {
+                borderColor = '2px solid #5F7279';
+                cursorStyle = 'pointer';
+              }
+           });
+            e['style'] = { backgroundColor: color,
+                           border: borderColor,
+                           cursor: cursorStyle
+                         }
+            return e
+          })
+        }
       }
     },
     beforeMount() {
       this.setDates();
-      this.sliderOptions.formatter =
-      this.moment.clone().subtract(this.sliderOptions.value[0], 'days').format('LL');
-      console.log('Date Range: ', this.datesRange[0], this.datesRange[1]);
+      this.setRange();
+    },
+    components: {
+      vueSlider
     },
     methods: {
       nextMonth(moment) {
@@ -156,6 +229,15 @@
           fun.add(1, 'day');
         }
       },
+      setRange() {
+        this.datesRange[0] = this.moment.clone()
+                                        .add(this.slider.value[0] - 1, 'days')
+                                        .unix();
+        this.datesRange[1] = this.moment.clone()
+                                        .add(this.slider.value[1], 'days')
+                                        .unix();
+        this.active = false;
+      },
       selectDate(date) {
         var _self = this;
         if ( date.unix() >= this.datesRange[0]
@@ -172,6 +254,16 @@
           }
         });
       },
+      removeDate() {
+        this.removedDates.push(moment(this.removedDisplay, 'MM/DD/YYYY'));
+        this.removedDisplay = "";
+        this.active = false;
+      },
+      addDate() {
+        this.addedDates.push(moment(this.addedDisplay, 'MM/DD/YYYY'));
+        this.addedDisplay = "";
+        this.active = false;
+      },
       focus() {
         this.active = !this.active;
       }
@@ -186,12 +278,36 @@
     padding: 30px 30px 30px 0;
   }
 
-  .appContainer {
-    margin: 0 0 0 100px;
+  #slider {
+    margin: 20px;
+  }
+
+  .calAndForms {
+    display: flex;
+    flex-flow: row wrap;
+  }
+
+  .cal, .forms {
+    flex: 1 0;
+  }
+
+  .btn {
+    width: 75px;
+    background-color: #82BEF2;
+    border: none;
+    display: inline-block;
+  }
+
+  .uniqueDate {
+    display: inline-block;
+  }
+
+  .sliderText {
+    margin-bottom: 50px;
   }
 
   .form-inline {
-    margin: 50px 0 15px 100px;
+    margin-bottom: 15px;
   }
 
   .input-group-addon {
@@ -274,10 +390,6 @@
     line-height: 40px;
     cursor: pointer;
     color: #5F7279;
-  }
-
-  .child:hover {
-    background-color: #ED8A9A;
   }
 
 </style>
