@@ -1,8 +1,6 @@
+![](/datepicker.png)
+
 ## vue-date-picker
-
-![vue-date-picker](https://github.com/MichaelRCruz/vue-date-picker/datepicker.png)
-
-
 
 This is a date picker that only allows a certain range of dates to choose from. For this specific application, it's a range of two years, i.e., one full year preceding today's date and one full year following today's date. The chosen date is displayed in a generic form-field as a string, but the user's selected date object is still available for use in any programatic way.
 
