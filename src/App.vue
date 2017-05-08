@@ -1,7 +1,7 @@
 <template lang="html">
   <div id="calendar">
 
-    <div class="sliderText">
+    <!-- <div class="sliderText">
       <h2>Date Picker</h2>
       <h5>Select the range of accessible dates, relative to today's date, using the slider-tool below.</h5>
       <h5>
@@ -19,7 +19,7 @@
                     v-bind="slider"
                     v-model="slider.value">
         </vue-slider>
-    </div>
+    </div> -->
 
     <div class="calAndForms">
 
@@ -132,12 +132,12 @@
         selection: {},
         active: false,
         slider: {
-          value: [-5, 5],
+          value: [-365, 365],
           width: "100%",
           height: 8,
           dotSize: 16,
-          min: -30,
-          max: 30,
+          min: -50,
+          max: 50,
           disabled: false,
           show: true,
           tooltip: "always",
