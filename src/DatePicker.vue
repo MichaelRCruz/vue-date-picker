@@ -1,5 +1,5 @@
 <template lang="html">
-  <div id="calendar">
+  <div id="datePicker">
 
 
     <form class="form-inline">
@@ -136,7 +136,7 @@
 </script>
 
 <style scoped>
-  #calendar {
+  #datePicker {
     flex: 1;
     padding: 30px 30px 30px 0;
   }
