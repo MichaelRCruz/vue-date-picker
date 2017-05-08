@@ -35,4 +35,4 @@ Date and time. Nuff said.
 * Vue.js
 * Moment.js
 * Node
-* Bootstrap
+* Bootstrap (form only)
