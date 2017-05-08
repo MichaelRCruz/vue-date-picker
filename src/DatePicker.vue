@@ -9,7 +9,8 @@
           <i class="fa fa-calendar"></i>
         </div>
         <input type="text"
-               class="form-control" id="inlineFormInputGroup" placeholder="MM/DD/YYYY"
+               class="form-control" id="inlineFormInputGroup"
+               placeholder="MM/DD/YYYY"
                :value="this.selectionDisplay"
                @click="activate()">
       </div>
@@ -217,8 +218,5 @@
     line-height: 40px;
     cursor: pointer;
     color: #5F7279;
-  }
-  .child:hover {
-    background-color: #ED8A9A;
   }
 </style>

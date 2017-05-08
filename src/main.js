@@ -1,7 +1,7 @@
-import Vue from 'vue'
-import App from './App.vue'
+import Vue from 'vue';
+import DatePicker from './DatePicker.vue';
 
 new Vue({
   el: '#app',
-  render: h => h(App)
+  render: h => h(DatePicker)
 })
