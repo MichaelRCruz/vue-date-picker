@@ -60,7 +60,6 @@
             <div class="child"
                  v-for="date in filterDate"
                  @click="selectDate(date)"
-
                  :style="[date.style]">
               {{ date.format('D') }}
             </div>
