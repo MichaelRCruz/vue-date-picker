@@ -5,13 +5,13 @@
     <form class="form-inline">
       <label class="sr-only" for="inlineFormInputGroup"></label>
       <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-        <div class="input-group-addon" @click="focus()">
+        <div class="input-group-addon" @click="activate()">
           <i class="fa fa-calendar"></i>
         </div>
         <input type="text"
                class="form-control" id="inlineFormInputGroup" placeholder="MM/DD/YYYY"
                :value="this.selectionDisplay"
-               @click="focus()">
+               @click="activate()">
       </div>
     </form>
 
@@ -56,7 +56,7 @@
     data() {
       return {
         month: [],
-        weekdays: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+        weekdays: [ "Su", "Mo", "Tu", "We", "Th", "Fr", "Sa" ],
         datesRange: [ moment().subtract(1, 'year').unix(),
                       moment().add(1, 'year').unix()
                     ],
@@ -64,7 +64,7 @@
         selectionDisplay: "",
         selection: {},
         active: false,
-        value: [365, 1095]
+        value: [ 365, 1095 ]
       }
     },
     computed: {
@@ -79,12 +79,12 @@
                  borderColor = '2px solid #5F7279';
                  cursorStyle = 'pointer'
                }
-          if (e.format('M') != _self.moment.format('M')) {
+          if ( e.format('M') != _self.moment.format('M') ) {
             color = '#dcf4d3';
           }
           e['style'] = { backgroundColor: color,
-                         border: borderColor,
-                         cursor: cursorStyle
+                                  border: borderColor,
+                                  cursor: cursorStyle
                        }
           return e
         })
@@ -97,26 +97,24 @@
       nextMonth(moment) {
         this.moment = moment.clone().add(1, 'months');
         this.setDates();
-        console.log('toggle forward', this.month);
       },
       lastMonth(moment) {
         this.moment = moment.clone().subtract(1, 'months');
         this.setDates();
-        console.log('toggle backward', this.month);
       },
       setDates() {
         this.month = [];
-        var fun = this.moment.clone().startOf('month').startOf('week');
-        var end = this.moment.clone().endOf('month').endOf('week');
-        while ( fun < end ) {
-          this.month.push(fun.clone());
-          fun.add(1, 'day');
+        var monthStart = this.moment.clone().startOf('month').startOf('week');
+        var monthEnd = this.moment.clone().endOf('month').endOf('week');
+        while ( monthStart < monthEnd ) {
+          this.month.push(monthStart.clone());
+          monthStart.add(1, 'day');
         }
       },
       selectDate(date) {
         var _self = this;
-        if ( date.unix() >= this.datesRange[0]
-             && date.unix() <= this.datesRange[1] ) {
+        if ( date.unix() >= this.datesRange[0] &&
+             date.unix() <= this.datesRange[1] ) {
           this.selectionDisplay = date.format('MM/DD/YYYY');
           this.selection = date;
           this.active = false;
@@ -129,7 +127,7 @@
           }
         });
       },
-      focus() {
+      activate() {
         this.active = !this.active;
       }
     }
