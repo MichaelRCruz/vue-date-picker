@@ -2,7 +2,7 @@
 
 ## vue-date-picker
 
-This is a date picker that only allows a certain range of dates to choose from. For this specific application, it's a range of two years, i.e., one full year preceding today's date and one full year following today's date. The chosen date is displayed in a generic form-field as a string, but the user's selected date object is still available for use in any programatic way.
+This is your basic date-picker application. You can hard code the range of dates in which you would like to allow the user to choose from. When the date is selected, the date is available as an object for any other perceivable use.
 
 #### Installation Instructions
 
@@ -35,8 +35,8 @@ The end points of the date-range are set as Unix time stamps, e.g., 1494251559 s
 ```javascript
 
 datesRange: [
-              moment().subtract(1, 'year').unix(),
-              moment().add(1, 'year').unix()
+              moment().subtract(1, 'week').unix(),
+              moment().add(1, 'week').unix()
             ],
 
 ```

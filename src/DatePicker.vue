@@ -59,8 +59,8 @@
         month: [],
         weekdays: [ "Su", "Mo", "Tu", "We", "Th", "Fr", "Sa" ],
         datesRange: [
-                      moment().subtract(1, 'year').unix(),
-                      moment().add(1, 'year').unix()
+                      moment().subtract(1, 'week').subtract(1, 'day').unix(),
+                      moment().add(1, 'week').unix()
                     ],
         moment: moment(),
         selectionDisplay: "",
